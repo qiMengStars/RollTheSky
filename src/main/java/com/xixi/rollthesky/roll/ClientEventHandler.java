@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputUpdateEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -77,44 +76,6 @@ public class ClientEventHandler {
             roll = -roll;
         }
         event.setRoll(roll);
-    }
-
-    @SubscribeEvent
-    public void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
-        if (player == null || event.getEntityPlayer() != player) {
-            return;
-        }
-        if (!RollRuntime.shouldRoll(player)) {
-            return;
-        }
-
-        float roll = RollRuntime.STATE.getRoll(event.getPartialRenderTick());
-        if (ConfigHandler.invertVisualRoll) {
-            roll = -roll;
-        }
-        if (roll != 0.0f) {
-            net.minecraft.client.renderer.GlStateManager.rotate(roll, 0.0f, 0.0f, 1.0f);
-        }
-    }
-
-    @SubscribeEvent
-    public void onRenderPlayerPost(RenderPlayerEvent.Post event) {
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
-        if (player == null || event.getEntityPlayer() != player) {
-            return;
-        }
-        if (!RollRuntime.shouldRoll(player)) {
-            return;
-        }
-
-        float roll = RollRuntime.STATE.getRoll(event.getPartialRenderTick());
-        if (ConfigHandler.invertVisualRoll) {
-            roll = -roll;
-        }
-        if (roll != 0.0f) {
-            net.minecraft.client.renderer.GlStateManager.rotate(-roll, 0.0f, 0.0f, 1.0f);
-        }
     }
 
     @SubscribeEvent

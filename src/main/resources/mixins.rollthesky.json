@@ -11,6 +11,7 @@
 	"mixins": [],
 	"server": [],
 	"client": [
-		"client.EntityRendererMixin"
+		"client.EntityRendererMixin",
+		"client.RenderPlayerMixin"
 	]
 }
