@@ -1,21 +1,33 @@
-## TemplateDevEnv
-_For Kotlin see [TemplateDevEnvKt](https://github.com/CleanroomMC/TemplateDevEnvKt)_
+# Roll The Sky
 
-Template workspace for modding Minecraft 1.12.2. Licensed under MIT, it is made for public use.
+Roll The Sky is a Minecraft 1.12.2 Forge client mod focused on elytra flight control.
+It adds configurable roll-based camera behavior, banking, smoothing, righting, and mouse/key turning logic inspired by modern free-flight camera control.
 
-This template runs on **Java 25**, **Gradle 9.2.1** + **[RetroFuturaGradle](https://github.com/GTNewHorizons/RetroFuturaGradle) 2.0.2** + **Forge 14.23.5.2847**.
+## Features
 
-With **coremod and mixin support** that is easy to configure.
+- Elytra roll and camera tilt while flying
+- Configurable yaw / roll axis swapping
+- Optional pitch, yaw, roll, and visual inversion
+- Input smoothing and momentum-style mouse turning
+- Banking and automatic righting controls
+- Forge 1.12.2 + MixinBooter based implementation
 
-### Instructions:
+## Development
 
-1. Click `use this template` at the top.
-2. Clone the repository that you have created with this template to your local machine.
-3. Make sure IDEA is using Java 25 for Gradle before you sync the project. Verify this by going to IDEA's `Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM`.
-4. Open the project folder in IDEA. When prompted, click "Load Gradle Project" as it detects the `build.gradle`, if you weren't prompted, right-click the project's `build.gradle` in IDEA, select `Link Gradle Project`, after completion, hit `Refresh All` in the gradle tab on the right.
-5. Run gradle tasks such as `runClient` and `runServer` in the IDEA gradle tab, or use the auto-imported run configurations like `1. Run Client`.
+- Build toolchain: Gradle 9.2.1 with RetroFuturaGradle
+- Build JDK: Java 25
+- Runtime target: Minecraft Forge 1.12.2
+- Main mod id: `rollthesky`
 
-### Notes:
-- Dependencies script in [gradle/scripts/dependencies.gradle](gradle/scripts/dependencies.gradle), explanations are commented in the file.
-- Publishing script in [gradle/scripts/publishing.gradle](gradle/scripts/publishing.gradle).
-- When writing Mixins on IntelliJ, it is advisable to use latest [MinecraftDev Fork for RetroFuturaGradle](https://github.com/eigenraven/MinecraftDev/releases).
+Useful tasks:
+
+- `./gradlew build`
+- `./gradlew runClient`
+- `./gradlew runObfClient`
+
+## Release checklist
+
+- Verify `build/libs/rollthesky-<version>.jar`
+- Ensure bundled mixin config is `mixins.rollthesky.json`
+- Ensure generated refmap is `mixins.rollthesky.refmap.json`
+- Test in a production modpack with MixinBooter installed
