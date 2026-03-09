@@ -4,6 +4,7 @@ import com.xixi.rollthesky.Tags;
 import net.minecraftforge.fml.common.Mod;
 import com.xixi.rollthesky.roll.ClientEventHandler;
 import com.xixi.rollthesky.roll.ConfigHandler;
+import com.xixi.rollthesky.roll.RollKeyBindings;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +25,7 @@ public class RollTheSkyMod {
         ConfigHandler.init(event.getModConfigurationDirectory());
 
         if (event.getSide().isClient()) {
+            RollKeyBindings.register();
             MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
         }
 

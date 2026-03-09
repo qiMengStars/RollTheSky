@@ -27,6 +27,7 @@ public class ClientEventHandler {
         EntityPlayerSP player = mc.player;
         if (player == null) {
             lastPlayer = null;
+            RollRuntime.STATE.resetBarrelRoll();
             RollRuntime.resetMouseState();
             return;
         }
@@ -36,12 +37,14 @@ public class ClientEventHandler {
             RollRuntime.STATE.setRoll(0.0f);
             RollRuntime.STATE.setRollBack(0.0f);
             RollRuntime.STATE.setRolling(false);
+            RollRuntime.STATE.resetBarrelRoll();
             RollRuntime.clearSmoothers();
             RollRuntime.resetMouseState();
         }
 
         boolean rolling = RollRuntime.shouldRoll(player);
         RollRuntime.STATE.setRolling(rolling);
+        RollRuntime.tickBarrelRoll(player);
 
         if (!rolling) {
             float rollBack = RollRuntime.STATE.getRollBack(1.0f);
@@ -51,6 +54,7 @@ public class ClientEventHandler {
             }
             RollRuntime.STATE.setRollBack(rollBack);
             RollRuntime.STATE.setRoll(0.0f);
+            RollRuntime.STATE.resetBarrelRoll();
             RollRuntime.clearSmoothers();
             RollRuntime.resetMouseState();
         }
@@ -65,17 +69,17 @@ public class ClientEventHandler {
         }
 
         float partial = (float) event.getRenderPartialTicks();
-        float roll;
+        boolean thirdPerson = mc.gameSettings != null && mc.gameSettings.thirdPersonView != 0;
+        float baseRoll;
+        float barrelRoll = thirdPerson ? 0.0f : RollRuntime.STATE.getBarrelRoll(partial);
         if (RollRuntime.shouldRoll(player)) {
-            roll = -RollRuntime.STATE.getRoll(partial);
+            baseRoll = RollRuntime.STATE.getRoll(partial);
         } else {
-            roll = -RollRuntime.STATE.getRollBack(partial);
+            baseRoll = RollRuntime.STATE.getRollBack(partial);
         }
 
-        if (ConfigHandler.invertVisualRoll) {
-            roll = -roll;
-        }
-        event.setRoll(roll);
+        float roll = PlayerRenderOrientation.resolveVisualRoll(baseRoll, barrelRoll, true);
+        event.setRoll(-roll);
     }
 
     @SubscribeEvent

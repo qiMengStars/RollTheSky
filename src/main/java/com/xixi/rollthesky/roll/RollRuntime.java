@@ -3,6 +3,7 @@ package com.xixi.rollthesky.roll;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.util.math.Vec3d;
 
 public final class RollRuntime {
     public static final RollState STATE = new RollState();
@@ -48,6 +49,33 @@ public final class RollRuntime {
         lastNanoTime = -1L;
         mouseTurnX = 0.0;
         mouseTurnY = 0.0;
+    }
+
+    public static float getVisualRoll(float partialTicks) {
+        return STATE.getRoll(partialTicks) + STATE.getBarrelRoll(partialTicks);
+    }
+
+    public static float getVisualRollBack(float partialTicks) {
+        return STATE.getRollBack(partialTicks) + STATE.getBarrelRoll(partialTicks);
+    }
+
+    public static void tickBarrelRoll(EntityPlayerSP player) {
+        if (player == null || !shouldRoll(player)) {
+            STATE.resetBarrelRoll();
+            return;
+        }
+
+        int direction = RollKeyBindings.consumeBarrelRollDirection();
+        if (direction != 0) {
+            STATE.startBarrelRoll(direction);
+        }
+
+        float duration = ConfigHandler.barrelRollDurationTicks;
+        if (duration < 1.0f) {
+            duration = 1.0f;
+        }
+        STATE.tickBarrelRoll(1.0f / duration);
+        applyBarrelRollDodge(player);
     }
 
     public static void handleMouseTurn(EntityPlayerSP player, float yawInput, float pitchInput) {
@@ -101,37 +129,21 @@ public final class RollRuntime {
             mouseTurnY = 0.0;
         }
 
-        // Base mapping mirrors DABR: mouseX controls yaw, then we optionally swap yaw/roll.
-        double pitch = mouseY;
-        double yaw = mouseX;
-        double roll = 0.0;
-
-        if (!ConfigHandler.switchRollAndYaw) {
-            double tmp = yaw;
-            yaw = roll;
-            roll = tmp;
-        }
-
-        if (ConfigHandler.invertPitch) {
-            pitch = -pitch;
-        }
-
-        if (ConfigHandler.invertYaw) {
-            yaw = -yaw;
-        }
-        if (ConfigHandler.invertRoll) {
-            roll = -roll;
-        }
-
-        // Key axis (A/D by default), scaled per-frame for consistent feel.
         double keyAxis = getKeyAxisInput(dt);
-        if (!ConfigHandler.switchRollAndYaw) {
-            // Default DABR controls: A/D to yaw.
-            yaw += keyAxis;
-        } else {
-            // Vanilla-like controls: mouse X to yaw, so put A/D on roll.
-            roll += keyAxis;
-        }
+
+        FlightControlInput.Axes axes = FlightControlInput.resolve(
+                mouseY,
+                mouseX,
+                keyAxis,
+                ConfigHandler.switchRollAndYaw,
+                ConfigHandler.invertPitch,
+                ConfigHandler.invertYaw,
+                ConfigHandler.invertRoll
+        );
+
+        double pitch = axes.getPitch();
+        double yaw = axes.getYaw();
+        double roll = axes.getRoll();
 
         // Apply additional sensitivity multipliers (DABR defaults: yaw=0.4).
         pitch *= ConfigHandler.desktopPitchSensitivity;
@@ -234,6 +246,21 @@ public final class RollRuntime {
         double degPerSecond = ConfigHandler.yawRateDegPerTick * 20.0;
         double degThisFrame = degPerSecond * dt * dir;
         return degThisFrame / 0.15;
+    }
+
+    private static void applyBarrelRollDodge(EntityPlayerSP player) {
+        float factor = STATE.getRawBarrelRollDodgeFactor();
+        int direction = STATE.getBarrelRollDirection();
+        if (factor <= 0.0f || direction == 0) {
+            return;
+        }
+
+        double yawRad = Math.toRadians(player.rotationYaw);
+        Vec3d right = new Vec3d(-Math.cos(yawRad), 0.0, -Math.sin(yawRad));
+        double strength = ConfigHandler.barrelRollDodgeStrength * factor * direction;
+
+        player.motionX += right.x * strength;
+        player.motionZ += right.z * strength;
     }
 
     private static double smoothInputDabr(DabrSmoother smoother, double input, double smoothness, double dt) {

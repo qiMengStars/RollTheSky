@@ -17,6 +17,8 @@ public final class ConfigHandler {
 
     // Matches DABR defaults closer when combined with desktopYawSensitivity = 0.4.
     public static float yawRateDegPerTick = 13.5f;
+    public static float barrelRollDurationTicks = 12.0f;
+    public static float barrelRollDodgeStrength = 0.08f;
     public static float rollReturnDamping = 0.85f;
 
     public static boolean smoothingEnabled = true;
@@ -69,6 +71,10 @@ public final class ConfigHandler {
 
         yawRateDegPerTick = (float) config.getFloat("yawRateDegPerTick", general, yawRateDegPerTick,
                 0.1f, 20.0f, "Yaw rate from keys in degrees per tick.");
+        barrelRollDurationTicks = (float) config.getFloat("barrelRollDurationTicks", general, barrelRollDurationTicks,
+                2.0f, 40.0f, "Barrel-roll animation duration in ticks.");
+        barrelRollDodgeStrength = (float) config.getFloat("barrelRollDodgeStrength", general, barrelRollDodgeStrength,
+                0.0f, 0.5f, "Horizontal dodge impulse applied during barrel rolls.");
         rollReturnDamping = (float) config.getFloat("rollReturnDamping", general, rollReturnDamping,
                 0.5f, 0.99f, "Roll return damping per tick when not rolling.");
 
