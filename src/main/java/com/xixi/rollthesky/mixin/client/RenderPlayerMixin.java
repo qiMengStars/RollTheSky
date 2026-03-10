@@ -86,9 +86,10 @@ public abstract class RenderPlayerMixin {
         GlStateManager.rotate(orientation.getFlightPitchRotation(), 1.0f, 0.0f, 0.0f);
 
         float visualRoll = orientation.getVisualRollRotation();
-        if (visualRoll != 0.0f) {
+        float modelRoll = PlayerRenderOrientation.resolveModelRollRotation(visualRoll);
+        if (modelRoll != 0.0f) {
             if (PlayerRenderOrientation.getModelRollAxis() == PlayerRenderOrientation.ModelRollAxis.BODY_Y) {
-                GlStateManager.rotate(visualRoll, 0.0f, 1.0f, 0.0f);
+                GlStateManager.rotate(modelRoll, 0.0f, 1.0f, 0.0f);
             }
         }
 

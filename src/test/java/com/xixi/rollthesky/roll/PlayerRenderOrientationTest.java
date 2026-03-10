@@ -92,6 +92,14 @@ class PlayerRenderOrientationTest {
     }
 
     @Test
+    void modelRollRotationNegatesVisualRoll() {
+        float visualRoll = PlayerRenderOrientation.resolveVisualRoll(15.0f, 120.0f, true);
+        float modelRoll = PlayerRenderOrientation.resolveModelRollRotation(visualRoll);
+
+        assertEquals(-visualRoll, modelRoll, 0.0001f);
+    }
+
+    @Test
     void modelRollUsesBodyAxisInsteadOfModelZAxis() {
         assertEquals(PlayerRenderOrientation.ModelRollAxis.BODY_Y,
                 PlayerRenderOrientation.getModelRollAxis());

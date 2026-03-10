@@ -44,6 +44,10 @@ public final class PlayerRenderOrientation {
         return visualRoll;
     }
 
+    public static float resolveModelRollRotation(float visualRoll) {
+        return -visualRoll;
+    }
+
     public static ModelRollAxis getModelRollAxis() {
         return ModelRollAxis.BODY_Y;
     }
