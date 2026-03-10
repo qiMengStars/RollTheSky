@@ -7,8 +7,8 @@ import org.lwjgl.input.Keyboard;
 public final class RollKeyBindings {
     private static final String CATEGORY = "key.categories.rollthesky";
 
-    private static final KeyBinding ROLL_LEFT = new KeyBinding("key.rollthesky.roll_left", Keyboard.KEY_Z, CATEGORY);
-    private static final KeyBinding ROLL_RIGHT = new KeyBinding("key.rollthesky.roll_right", Keyboard.KEY_C, CATEGORY);
+    private static final KeyBinding ROLL_LEFT = new KeyBinding("key.rollthesky.roll_left", Keyboard.KEY_NONE, CATEGORY);
+    private static final KeyBinding ROLL_RIGHT = new KeyBinding("key.rollthesky.roll_right", Keyboard.KEY_NONE, CATEGORY);
 
     private static boolean registered;
 
